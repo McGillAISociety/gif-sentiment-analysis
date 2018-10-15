@@ -123,3 +123,7 @@ rick/sandbox/*
 # PipEnv Stuff
 Pipfile
 Pipfile.lock
+
+# GIF Files
+*.gif
+gif_data/

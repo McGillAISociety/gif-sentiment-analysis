@@ -10,3 +10,4 @@ requests==2.19.1
 six==1.11.0
 tables==3.4.4
 urllib3==1.23
+wget==3.2
