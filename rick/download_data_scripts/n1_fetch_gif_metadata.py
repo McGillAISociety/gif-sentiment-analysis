@@ -28,7 +28,7 @@ def main():
 
     # Parameters used to query the API.
     api_url = 'https://www.qnt.io/api/results'
-    payload = {'pID': 'gifgif', 'limit': 5, 'sort': 1, 'key': api_key, 'mID': None}
+    payload = {'pID': 'gifgif', 'limit': 5000, 'sort': 1, 'key': api_key, 'mID': None}
 
     # ----------------------------------------
     # Fetch mID
