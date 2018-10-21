@@ -26,6 +26,9 @@ address those to form a complete solution. Some things we are working on:
 * Correlation between sentiments and the color features of the GIF, e.g. quantifying how a dark and gloomy tone
 of an image affects the perceived sentiment.
 
+Using this approach, we hope to be able to design a CNN-LTSM network capable of detecting the strength of the
+sentiments found in any random GIF you might find on the internet. 
+
 ## Example GIF's
 
 ![GIF Slideshow](media/slow_gif_slideshow.gif)
