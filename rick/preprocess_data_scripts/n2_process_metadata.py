@@ -23,13 +23,15 @@ def main():
     # ----------------------------------------
 
     # Reformat the data such that it more readily provides the information required. The processed format will have a
-    # four columns: trueskill_mu, trueskill_sigma, download link, and raw_data (indexed by cID), for which there
-    # will be a row for each unique GIF. This is done so the data can be further processed while accounting for GIF's
-    # that are in multiple categories, but with different statistics within each.
+    # five columns: trueskill_mu, trueskill_sigma, trueskill_rating, download link, and raw_data (indexed by cID),
+    # for which there will be a row for each unique GIF. This is done so the data can be further processed while
+    # accounting for GIF's that are in multiple categories, but with different statistics within each.
     #
     # The mu and sigma provided for each of the GIF and category pairs corresponds to a TrueSkill rating on the range
     # [0, 50], with a higher score indicating higher probability. As part of preprocessing, the mu and sigma
     # are divided by 50 to normalize onto [0, 1].
+    #
+    # Lastly, the "true" rating for the GIF is estimated by mu - 3*sigma (i.e. 99% confidence).
 
     processed_data = {}
     categories = list(meta_data_df.columns)
@@ -38,8 +40,9 @@ def main():
         for column_index, column_name in enumerate(meta_data_df.columns):
             # Parse meta-data.
             gif_data = row[column_name]
-            gif_mu = gif_data['parameters']['mu']
-            gif_sigma = gif_data['parameters']['sigma']
+            gif_mu = gif_data['parameters']['mu'] / 50
+            gif_sigma = gif_data['parameters']['sigma'] / 50
+            gif_trueskill_rating = max(0, gif_mu - (3 * gif_sigma))
             gif_cid = gif_data['cID']
             gif_download_link = gif_data['content_data']['embedLink']
 
@@ -47,11 +50,13 @@ def main():
             if not processed_data.get(gif_cid):
                 processed_data[gif_cid] = {'trueskill_mu': np.zeros(len(categories)),
                                            'trueskill_sigma': np.zeros(len(categories)),
+                                           'trueskill_rating': np.zeros(len(categories)),
                                            'raw_data': {},
                                            'download_link': ''}
 
-            processed_data[gif_cid]['trueskill_mu'][column_index] = gif_mu / 50
-            processed_data[gif_cid]['trueskill_sigma'][column_index] = gif_sigma / 50
+            processed_data[gif_cid]['trueskill_mu'][column_index] = gif_mu
+            processed_data[gif_cid]['trueskill_sigma'][column_index] = gif_sigma
+            processed_data[gif_cid]['trueskill_rating'][column_index] = gif_trueskill_rating
             processed_data[gif_cid]['raw_data'][column_name] = gif_data
             if not processed_data[gif_cid]['download_link']:
                 processed_data[gif_cid]['download_link'] = gif_download_link
