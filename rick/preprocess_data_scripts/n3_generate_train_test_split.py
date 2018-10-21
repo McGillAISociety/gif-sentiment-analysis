@@ -26,7 +26,8 @@ def get_train_test_split(test_size=0.2, random_state=123123123, processed_metada
     # Finally, split the category into training and testing splits, specified by cID.
     ids_train, ids_test = train_test_split(meta_data_df.index.values,
                                            test_size=test_size,
-                                           random_state=random_state)
+                                           random_state=random_state,
+                                           shuffle=True)
 
     return ids_train, ids_test
 
