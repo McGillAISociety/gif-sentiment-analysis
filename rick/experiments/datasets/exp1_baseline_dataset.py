@@ -65,7 +65,9 @@ class GifDataset(data.Dataset):
     def __init__(self, dataframe, target_img_size):
         self.dataframe = dataframe
         self.target_img_size = target_img_size
-        self.gif_transforms = transforms.Compose([
+        self.loaded_gifs_cache = {}
+
+        self.preprocess_gif = transforms.Compose([
             transforms.ToPILImage(),
             transforms.Resize(self.target_img_size[:2]),
             transforms.ToTensor(),
@@ -77,11 +79,17 @@ class GifDataset(data.Dataset):
         return len(self.dataframe.index)
 
     def __getitem__(self, index):
-        # Load the middle frame from the GIF.
+        # Load the middle frame from the GIF (from cache if possible).
         c_id = self.dataframe.iloc[index].name
-        gif_filepath = str(GIF_TRAIN_DATA_DIR / '{}.gif'.format(c_id))
-        gif = convert_gif_to_frames(gif_filepath)
-        gif = gif[math.floor(len(gif) / 2)]
+        gif = self.loaded_gifs_cache.get(c_id)
+
+        # If the GIF is not found in cache (i.e. first epoch), load the middle frame and pre-process.
+        if gif is None:
+            gif_filepath = str(GIF_TRAIN_DATA_DIR / '{}.gif'.format(c_id))
+            gif = convert_gif_to_frames(gif_filepath)
+            gif = gif[math.floor(len(gif) / 2)]
+            gif = self.preprocess_image(gif)
+            self.loaded_gifs_cache[c_id] = gif
 
         # Load TrueSkill rating.
         rating = self.dataframe.iloc[index]['trueskill_rating']
@@ -90,19 +98,24 @@ class GifDataset(data.Dataset):
         gif, rating = self.transform(gif, rating)
         return gif, rating
 
-    def transform(self, gif, rating):
+    def preprocess_image(self, gif):
         # Expand the dimensions of greyscale images to be (3, H, W).
         if gif.ndim == 2:
-            gif = np.stack((gif,)*3, axis=0)
+            gif = np.stack((gif,) * 3, axis=0)
 
         # Resize, normalize and convert to tensor.
-        gif = self.gif_transforms(gif[..., ::-1])
+        gif = self.preprocess_gif(gif[..., ::-1])
 
-        # For this baseline, let's try to make a classifier which can detect anger, disgust, or contempt
-        # which corresponds to categories 1, 2, and 4 respectively.
-        max_category = np.argmax(rating)
-        if int(max_category) in [1, 2, 4]:
+        return gif
+
+    def transform(self, gif, rating):
+        # For the baseline, partition the classes into several class clusters based on their correlation.
+        max_category = int(np.argmax(rating))
+
+        # Positive = (Amusement, Contentment, Excitement, Happiness, Pleasure, Pride, Relief, Satisfaction)
+        if max_category in [0, 3, 6, 9, 10, 11, 12, 14]:
             rating = np.ones(1)
+        # Negative = (Anger, Contempt, Disgust, Embarrassment, Fear, Guilt, Sadness, Shame, Surprise)
         else:
             rating = np.zeros(1)
         rating = torch.from_numpy(rating).float()

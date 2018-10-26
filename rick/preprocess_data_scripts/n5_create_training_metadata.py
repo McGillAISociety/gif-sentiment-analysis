@@ -1,11 +1,7 @@
-import os
 import pickle
-import wget
-import logging
-import time
 
-from rick.preprocess_data_scripts.n3_generate_train_test_split import get_train_test_split
 from rick.filepath_settings import GIF_PROCESSED_METADATA_PATH, GIF_TRAIN_METADATA
+from rick.preprocess_data_scripts.n3_generate_train_test_split import get_train_test_split
 
 """ 
 Script used to generate a data-frame only containing the training data.

@@ -2,7 +2,6 @@ import torch
 import gc
 import os
 import logging
-import numpy as np
 import torch.optim as optim
 import torch.nn as nn
 from datetime import datetime
@@ -20,7 +19,7 @@ from rick.experiments.utilities.calculate_metrics import calculate_accuracy
 device = torch.device("cuda:0")
 
 # Training Settings
-batch_size = 32
+batch_size = 128
 num_epochs = 50
 folds_to_train = [0]
 
