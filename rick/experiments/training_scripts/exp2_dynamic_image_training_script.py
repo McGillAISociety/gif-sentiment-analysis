@@ -6,6 +6,10 @@ import torch.optim as optim
 import torch.nn as nn
 from datetime import datetime
 
+"""
+5 Fold CV Best Loss: 0.6709386929869652 | 0.6842632591724396 | 0.6594144776463509 | 0.6695199608802795 | 0.6728682070970535
+"""
+
 # ==============================================
 # Setup
 # ==============================================
@@ -54,7 +58,7 @@ for fold_i, (train_loader, validation_loader) in enumerate(data_loaders):
 
     # Initialize optimizer and loss function.
     criterion = nn.BCEWithLogitsLoss()
-    optimizer = optim.Adam(net.parameters())
+    optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
     time_start = datetime.now()
     print('Starting Training on Fold: {}\n'.format(fold_i))

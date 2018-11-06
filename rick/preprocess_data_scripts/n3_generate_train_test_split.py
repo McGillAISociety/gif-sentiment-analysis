@@ -20,10 +20,7 @@ def get_train_test_split(test_size=0.2, random_state=123123123, processed_metada
     # Split the data
     # ----------------------------------------
 
-    # Split the data-frame containing meta-data for N categories, into N data-frames. This is done to
-    # ensure that each category is handled independently.
-
-    # Finally, split the category into training and testing splits, specified by cID.
+    # Split the category into training and testing splits, specified by cID.
     ids_train, ids_test = train_test_split(meta_data_df.index.values,
                                            test_size=test_size,
                                            random_state=random_state,

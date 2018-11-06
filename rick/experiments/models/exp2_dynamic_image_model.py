@@ -5,7 +5,17 @@ from torchsummary import summary
 
 
 def get_model():
-    return SimpleConvnet()
+    model = torchvision.models.resnet50(pretrained=True)
+    for param in model.parameters():
+        param.requires_grad = False
+
+    model.fc = nn.Sequential(
+        nn.Linear(2048, 512),
+        nn.ReLU(inplace=True),
+        nn.Linear(512, 1)
+    )
+
+    return model
 
 
 class SimpleConvnet(nn.Module):
