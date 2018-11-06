@@ -21,5 +21,3 @@ def get_model(num_classes=1):
 if __name__ == '__main__':
     _model = get_model()
     summary(_model, input_size=(3, 224, 224), device='cpu')
-
-

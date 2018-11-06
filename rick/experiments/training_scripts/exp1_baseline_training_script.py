@@ -6,6 +6,10 @@ import torch.optim as optim
 import torch.nn as nn
 from datetime import datetime
 
+"""
+5 Fold CV: 0.667024 | 0.678283 | 0.665280 | 0.669749 | 0.667215
+"""
+
 # ==============================================
 # Setup
 # ==============================================
@@ -21,7 +25,7 @@ device = torch.device("cuda:0")
 # Training Settings
 batch_size = 128
 num_epochs = 50
-folds_to_train = [0]
+folds_to_train = [0, 1, 2, 3, 4]
 
 # Load data-loaders, i.e. [(train_dataloader, val_dataloader), ...]
 data_loaders = get_training_and_validation_dataloaders(n_splits=5, batch_size=batch_size)

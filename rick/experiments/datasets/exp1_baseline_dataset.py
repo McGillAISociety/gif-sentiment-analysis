@@ -159,8 +159,9 @@ def main():
         for j, data in enumerate(t):
             img = data[0][0].numpy()
             img = np.transpose(img, (1, 2, 0))[..., ::-1]
+            label = str(int(data[1][0].numpy()))
 
-            cv2.imshow('', img)
+            cv2.imshow(label, img)
             cv2.waitKey()
 
 
