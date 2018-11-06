@@ -1,0 +1,3 @@
+[submodule "rick/external_libraries/python_dynamic_images"]
+	path = rick/external_libraries/python_dynamic_images
+	url = https://github.com/tcvrick/Python-Dynamic-Images-for-Action-Recognition
