@@ -110,15 +110,6 @@ class GifDataset(data.Dataset):
         return gif
 
     def transform(self, gif, rating):
-        # For the baseline, partition the classes into several class clusters based on their correlation.
-        max_category = int(np.argmax(rating))
-
-        # Positive = (Amusement, Contentment, Excitement, Happiness, Pleasure, Pride, Relief, Satisfaction)
-        if max_category in [0, 3, 6, 9, 10, 11, 12, 14]:
-            rating = np.ones(1)
-        # Negative = (Anger, Contempt, Disgust, Embarrassment, Fear, Guilt, Sadness, Shame, Surprise)
-        else:
-            rating = np.zeros(1)
         rating = torch.from_numpy(rating).float()
 
         return gif, rating
@@ -131,9 +122,9 @@ def main():
         for j, data in enumerate(t):
             img = data[0][0].numpy()
             img = np.transpose(img, (1, 2, 0))[..., ::-1]
-            label = str(int(data[1][0].numpy()))
+            # label = str(int(data[1][0].numpy()))
 
-            cv2.imshow(label, img)
+            cv2.imshow('', img)
             cv2.waitKey()
 
 

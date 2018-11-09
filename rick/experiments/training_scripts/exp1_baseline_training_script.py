@@ -8,7 +8,7 @@ from datetime import datetime
 
 
 """
-5 Fold CV Best Loss: 0.667024 | 0.678283 | 0.665280 | 0.669749 | 0.667215
+5 Fold CV Best MSE: 0.034038 | 0.033949 | 0.033914 | 0.034565 | 0.033847
 """
 
 # ==============================================
@@ -58,8 +58,8 @@ for fold_i, (train_loader, validation_loader) in enumerate(data_loaders):
     net.to(device)
 
     # Initialize optimizer and loss function.
-    criterion = nn.BCEWithLogitsLoss()
-    optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+    criterion = nn.MSELoss()
+    optimizer = optim.SGD(net.parameters(), lr=0.005, momentum=0.9)
 
     time_start = datetime.now()
     print('Starting Training on Fold: {}\n'.format(fold_i))
@@ -94,7 +94,6 @@ for fold_i, (train_loader, validation_loader) in enumerate(data_loaders):
             # Keep track of the loss and number of batches.
             num_mini_batches += 1
             train_running_loss += loss.item()
-            train_running_acc += calculate_accuracy(y_pred, y_train)
 
         # ==============================================
         # Validation Pass
@@ -118,17 +117,13 @@ for fold_i, (train_loader, validation_loader) in enumerate(data_loaders):
                 # Keep track of the loss and number of batches.
                 num_val_mini_batches += 1
                 val_running_loss += loss.item()
-                val_running_acc += calculate_accuracy(y_pred, y_val)
 
         # ==============================================
         # Statistics
         # ==============================================
         time_elapsed = datetime.now() - time_start
         avg_loss = train_running_loss / num_mini_batches
-        avg_acc = train_running_acc / num_mini_batches
-
         avg_val_loss = val_running_loss / num_val_mini_batches
-        avg_val_acc = val_running_acc / num_val_mini_batches
 
         # Keep track of best model.
         if avg_val_loss < best_val_loss:
@@ -138,11 +133,9 @@ for fold_i, (train_loader, validation_loader) in enumerate(data_loaders):
         output_msg = 'Epoch: {}/{}\n' \
                      '---------------------\n' \
                      'train loss: {:.6f}, val loss: {:.6f}\n' \
-                     'train acc: {:.4f}, val acc: {:.4f}\n' \
                      'best val loss: {:.6f}, time elapsed: {}\n'. \
             format(epoch_i, num_epochs,
                    avg_loss, avg_val_loss,
-                   avg_acc, avg_val_acc,
                    best_val_loss, str(time_elapsed).split('.')[0])
         print(output_msg)
         logger.info(output_msg)

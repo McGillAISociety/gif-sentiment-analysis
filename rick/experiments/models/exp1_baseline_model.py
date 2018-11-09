@@ -4,15 +4,13 @@ import torch.nn as nn
 from torchsummary import summary
 
 
-def get_model(num_classes=1):
+def get_model(num_classes=17):
     model = torchvision.models.resnet50(pretrained=True)
     for param in model.parameters():
         param.requires_grad = False
 
     model.fc = nn.Sequential(
-        nn.Linear(2048, 512),
-        nn.ReLU(inplace=True),
-        nn.Linear(512, num_classes)
+        nn.Linear(2048, num_classes)
     )
 
     return model
